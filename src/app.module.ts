@@ -5,8 +5,8 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { FinanceModule } from './finance/finance.module'; // Assuming FinanceModule is the correct one
 import { User } from './user/entities/user.entity';
-import { FinancialSummary } from './finance/entities/financial-summary.entity';
-import { FinancialChartData } from './finance/entities/financial-chart-data.entity';
+import { FinanceRecord } from './finance/entities/finance-record.entity';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -24,9 +24,14 @@ import { FinancialChartData } from './finance/entities/financial-chart-data.enti
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [User, FinancialSummary, FinancialChartData], // Add your entities here
+        entities: [User, FinanceRecord], // Add your entities here
         synchronize: true, // Disable in production
       }),
+    }),
+    CacheModule.register({
+      ttl: 60, // Default cache TTL (time to live) in seconds
+      max: 100, // Maximum number of items in the cache
+      isGlobal: true, // Makes cache globally available in the app
     }),
     UserModule,
     AuthModule,
