@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FinanceRecord } from './entities/finance-record.entity';
 import { CreateFinanceRecordDto } from './dto/create-finance-record.dto';
+import { ResponseFinanceRecordDto } from './dto/response-finance-record.dto.ts';
 
 @Injectable()
 export class FinanceService {
@@ -20,21 +21,35 @@ export class FinanceService {
     private financeRecordRepository: Repository<FinanceRecord>,
   ) {}
 
-  // Method to create a new finance record
   async createFinanceRecord(
-    userId: string,
+    userId: number,
     createFinanceRecordDto: CreateFinanceRecordDto,
-  ): Promise<FinanceRecord> {
+  ): Promise<ResponseFinanceRecordDto> {
     try {
+      // Create a new finance record
       const financeRecord = this.financeRecordRepository.create({
-        userId,
         ...createFinanceRecordDto,
+        userId,
+        type: createFinanceRecordDto.type,
+        amount: createFinanceRecordDto.amount.toString(), // Convert amount to string for decimal type
       });
-      return await this.financeRecordRepository.save(financeRecord);
+
+      // Save the finance record to the database
+      const savedRecord =
+        await this.financeRecordRepository.save(financeRecord);
+
+      // Map the saved record to the ResponseFinanceRecordDto
+      return {
+        id: savedRecord.id,
+        type: savedRecord.type,
+        amount: savedRecord.amount,
+        description: savedRecord.description,
+        category: savedRecord.category,
+        userId: savedRecord.userId,
+        createdAt: savedRecord.createdAt,
+      };
     } catch (error) {
-      this.logger.error(
-        `Error creating finance record for user ${userId}: ${error.message}`,
-      );
+      // Handle errors and log them
       throw new HttpException(
         'Failed to create finance record',
         HttpStatus.INTERNAL_SERVER_ERROR,

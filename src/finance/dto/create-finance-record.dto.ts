@@ -1,10 +1,10 @@
 // src/finance/dto/create-finance-record.dto.ts
-import { IsString, IsNumber, IsIn, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { FinanceRecordType } from '../entities/finance-record.entity';
 
 export class CreateFinanceRecordDto {
-  @IsString()
-  @IsIn(['income', 'expense'])
-  type: string;
+  @IsEnum(FinanceRecordType)
+  type: FinanceRecordType;
 
   @IsNumber()
   amount: number;

@@ -6,25 +6,33 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity()
+export enum FinanceRecordType {
+  INCOME = 'income',
+  EXPENSE = 'expense',
+}
+
+@Entity('finance_records')
 export class FinanceRecord {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  userId: string;
+  @Column({ type: 'int' })
+  userId: number;
 
-  @Column()
-  type: string; // 'income' or 'expense'
+  @Column({
+    type: 'enum',
+    enum: FinanceRecordType,
+  })
+  type: FinanceRecordType;
 
-  @Column('decimal', { precision: 10, scale: 2 })
-  amount: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  amount: string;
 
-  @Column()
+  @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column()
-  category: string; // New field for categorizing income/expenses
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  category: string;
 
   @CreateDateColumn()
   createdAt: Date;
