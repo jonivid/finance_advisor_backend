@@ -1,16 +1,19 @@
 // src/finance/dto/create-finance-record.dto.ts
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsIn, IsNotEmpty } from 'class-validator';
 
 export class CreateFinanceRecordDto {
   @IsString()
-  type: string; // 'income' or 'expense'
+  @IsIn(['income', 'expense'])
+  type: string;
 
   @IsNumber()
   amount: number;
 
   @IsString()
+  @IsNotEmpty()
   description: string;
 
   @IsString()
-  category: string; // New field for category
+  @IsNotEmpty()
+  category: string;
 }

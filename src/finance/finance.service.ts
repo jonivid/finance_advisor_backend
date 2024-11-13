@@ -23,16 +23,12 @@ export class FinanceService {
   // Method to create a new finance record
   async createFinanceRecord(
     userId: string,
-    dto: CreateFinanceRecordDto,
+    createFinanceRecordDto: CreateFinanceRecordDto,
   ): Promise<FinanceRecord> {
     try {
-      this.logger.log(`Creating finance record for user ${userId}`);
       const financeRecord = this.financeRecordRepository.create({
         userId,
-        type: dto.type,
-        amount: dto.amount,
-        description: dto.description,
-        category: dto.category,
+        ...createFinanceRecordDto,
       });
       return await this.financeRecordRepository.save(financeRecord);
     } catch (error) {
